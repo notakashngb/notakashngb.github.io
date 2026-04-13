@@ -1,0 +1,265 @@
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; }
+  .post, article, .post-header, header, main, .page, #main, #content { 
+    margin: 0 !important; padding: 0 !important; 
+  }
+
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.4s ease;
+  }
+  #loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #loading-screen span {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    letter-spacing: 0.02em;
+  }
+</style>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.8/dist/dotlottie-wc.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+
+<div style="position: fixed; inset: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;">
+
+  <!-- Loading screen -->
+  <div id="loading-screen">
+    <dotlottie-wc src="https://lottie.host/57fc8b1f-4e6f-4613-8713-816930f1ee1c/0URiQdlZkM.lottie" style="width: 300px; height: 300px;" autoplay loop></dotlottie-wc>
+  </div>
+
+  <iframe 
+    id="sketchfab-iframe"
+    title="batmobile armored" 
+    frameborder="0" 
+    allowfullscreen 
+    mozallowfullscreen="true" 
+    webkitallowfullscreen="true" 
+    allow="autoplay; fullscreen; xr-spatial-tracking" 
+    xr-spatial-tracking 
+    execution-while-out-of-viewport 
+    execution-while-not-rendered 
+    web-share 
+    allowtransparency="true"
+    style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; background: transparent;">
+  </iframe>
+
+  <!-- Hand tracking canvas — above everything except loading screen -->
+  <video id="hand-video" playsinline style="position:absolute;visibility:hidden;width:1px;height:1px;"></video>
+  <canvas id="hand-canvas" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:99998;pointer-events:none;transform:scaleX(-1);"></canvas>
+
+  <div style="
+    position: fixed;
+    right: 1.5rem;
+    top: 1.5rem;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: 0.08em;
+  ">akash</div>
+
+  <div id="social-icons" style="
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    mix-blend-mode: difference;
+  "></div>
+
+</div>
+
+<script>
+  setTimeout(function() {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 1600);
+
+  setTimeout(function() {
+    var icons = document.getElementById('social-icons');
+    icons.innerHTML = `
+      <a href="https://github.com/akashngb" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/github-animated.svg" alt="GitHub" style="width: 38px; height: 38px;">
+      </a>
+      <a href="https://www.linkedin.com/in/akash-nagabhirava-164155327/" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/linkedin-animated.svg" alt="LinkedIn" style="width: 38px; height: 38px;">
+      </a>
+      <a href="https://devpost.com/akash30n" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/devpost-animated.svg" alt="Devpost" style="width: 38px; height: 38px;">
+      </a>
+      <a href="mailto:akash.nagabhirava@mail.utoronto.ca" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/email-animated.svg" alt="Email" style="width: 38px; height: 38px;">
+      </a>
+    `;
+    icons.style.display = 'flex';
+  }, 3000);
+</script>
+
+<script>
+  // ─── Sketchfab Viewer API ──────────────────────────────────────────────────────
+  let sfApi = null;
+  let camReady = false;
+  let cEye = null, cTarget = null;
+  let handActive = false;
+
+  // Smoothed centroid tracking
+  let smoothX = null;
+  let prevSX = null;
+  const ALPHA = 0.4;
+  const MIN_DELTA = 0.0005;
+  const GAIN = 3.0;
+
+  // ─── Y-axis rotation ──────────────────────────────────────────────────────────
+  function rotateY(eye, target, angle) {
+    const dx = eye[0] - target[0];
+    const dy = eye[1] - target[1];
+    const dz = eye[2] - target[2];
+    const c = Math.cos(angle), s = Math.sin(angle);
+    return [target[0] + dx*c - dz*s, target[1] + dy, target[2] + dx*s + dz*c];
+  }
+
+  // ─── Init Sketchfab ────────────────────────────────────────────────────────────
+  (function() {
+    const iframe = document.getElementById('sketchfab-iframe');
+    const client = new Sketchfab(iframe);
+    client.init('sBv577Vdl9lrcvyFT3vbNvkGKml', {
+      success: function(api) {
+        sfApi = api;
+        api.start(function() {
+          api.setUserInteraction(true);
+          setTimeout(function() { camReady = true; }, 2500);
+        });
+      },
+      error: function() { console.error('Sketchfab init failed'); },
+      autostart:1, preload:1, transparent:1,
+      ui_animations:0, ui_infos:0, ui_stop:0, ui_inspector:0,
+      ui_watermark_link:0, ui_watermark:0, ui_hint:0, ui_ar:0,
+      ui_help:0, ui_settings:0, ui_vr:0, ui_fullscreen:0,
+      ui_annotations:0, ui_downloads:0, ui_share:0,
+    });
+  })();
+
+  // ─── Hand tracking ─────────────────────────────────────────────────────────────
+  const videoEl = document.getElementById('hand-video');
+  const canvas  = document.getElementById('hand-canvas');
+  const ctx     = canvas.getContext('2d');
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // ─── Draw neon skeleton (GREEN) ────────────────────────────────────────────────
+  function drawNeonSkeleton(lms) {
+    const c = '#00ff44';
+    ctx.save();
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#00ff66';
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 3;
+    const conn = [
+      [0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],
+      [5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],
+      [13,17],[17,18],[18,19],[19,20],[0,17]
+    ];
+    conn.forEach(([a,b]) => {
+      ctx.beginPath();
+      ctx.moveTo(lms[a].x*canvas.width, lms[a].y*canvas.height);
+      ctx.lineTo(lms[b].x*canvas.width, lms[b].y*canvas.height);
+      ctx.stroke();
+    });
+    ctx.fillStyle = c;
+    lms.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x*canvas.width, p.y*canvas.height, 4, 0, Math.PI*2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  // ─── Gesture: thumb + index + middle extended, ring + pinky curled ─────────────
+  function isThreeFingerGrip(l) {
+    const thumbOut  = Math.abs(l[4].x - l[3].x) > 0.02;    // thumb extended laterally
+    const indexUp   = l[8].y  < l[6].y  - 0.02;             // index extended
+    const middleUp  = l[12].y < l[10].y - 0.02;             // middle extended
+    const ringDown  = l[16].y > l[14].y - 0.01;             // ring curled
+    const pinkyDown = l[20].y > l[18].y - 0.01;             // pinky curled
+    return thumbOut && indexUp && middleUp && ringDown && pinkyDown;
+  }
+
+  // ─── Main callback ─────────────────────────────────────────────────────────────
+  function onResults(results) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!results.multiHandLandmarks || !results.multiHandLandmarks.length) {
+      handActive = false;
+      smoothX = prevSX = null;
+      return;
+    }
+
+    const l = results.multiHandLandmarks[0];
+    drawNeonSkeleton(l);
+
+    if (!isThreeFingerGrip(l) || !sfApi || !camReady) {
+      handActive = false;
+      smoothX = prevSX = null;
+      return;
+    }
+
+    // Centroid X of thumb tip (4), index tip (8), middle tip (12)
+    const rawX = (l[4].x + l[8].x + l[12].x) / 3;
+
+    // Smooth position
+    if (smoothX === null) smoothX = rawX;
+    else smoothX += ALPHA * (rawX - smoothX);
+
+    // First frame: snapshot camera, store prev position
+    if (!handActive) {
+      handActive = true;
+      prevSX = smoothX;
+      sfApi.getCameraLookAt(function(err, cam) {
+        if (!err) { cEye = cam.position.slice(); cTarget = cam.target.slice(); }
+      });
+      return;
+    }
+
+    // Frame-to-frame delta
+    const dx = smoothX - prevSX;
+    prevSX = smoothX;
+
+    if (Math.abs(dx) < MIN_DELTA || !cEye) return;
+
+    // Rotate camera around Y-axis
+    cEye = rotateY(cEye, cTarget, dx * GAIN);
+    sfApi.setCameraLookAt(cEye, cTarget, 0.05);
+  }
+
+  // ─── Init MediaPipe ────────────────────────────────────────────────────────────
+  const hands = new Hands({
+    locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+  });
+  hands.setOptions({ maxNumHands:1, modelComplexity:1, minDetectionConfidence:0.85, minTrackingConfidence:0.85 });
+  hands.onResults(onResults);
+  const cam = new Camera(videoEl, {
+    onFrame: async () => { await hands.send({image:videoEl}); },
+    width: 1280, height: 720
+  });
+  cam.start();
+</script>

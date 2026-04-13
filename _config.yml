@@ -1,0 +1,8 @@
+title: Akash
+baseurl: "" 
+url: "https://akashngb.github.io"
+
+# This ensures Jekyll doesn't try to use the old theme logic
+theme: null
+plugins:
+  - jekyll-feed

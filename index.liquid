@@ -1,0 +1,128 @@
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; }
+  .post, article, .post-header, header, main, .page, #main, #content { 
+    margin: 0 !important; padding: 0 !important; 
+  }
+
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.4s ease;
+  }
+  #loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #loading-screen span {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    letter-spacing: 0.02em;
+  }
+</style>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.8/dist/dotlottie-wc.js" type="module"></script>
+<script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+
+<div style="position: fixed; inset: 0; width: 100vw; height: 100vh; margin: 0; padding: 0;">
+
+  <div id="loading-screen">
+    <dotlottie-wc src="https://lottie.host/57fc8b1f-4e6f-4613-8713-816930f1ee1c/0URiQdlZkM.lottie" style="width: 300px; height: 300px;" autoplay loop></dotlottie-wc>
+  </div>
+
+  <iframe 
+    id="sketchfab-iframe"
+    title="batmobile armored" 
+    frameborder="0" 
+    allowfullscreen 
+    mozallowfullscreen="true" 
+    webkitallowfullscreen="true" 
+    allow="autoplay; fullscreen; xr-spatial-tracking" 
+    xr-spatial-tracking 
+    execution-while-out-of-viewport 
+    execution-while-not-rendered 
+    web-share 
+    allowtransparency="true"
+    style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; background: transparent;">
+  </iframe>
+
+  <div style="
+    position: fixed;
+    right: 1.5rem;
+    top: 1.5rem;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: 0.08em;
+  ">akash</div>
+
+  <div id="social-icons" style="
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    mix-blend-mode: difference;
+  "></div>
+
+</div>
+
+<script>
+  setTimeout(function() {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 1600);
+
+  setTimeout(function() {
+    var icons = document.getElementById('social-icons');
+    icons.innerHTML = `
+      <a href="https://github.com/akashngb" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/github-animated.svg" alt="GitHub" style="width: 38px; height: 38px;">
+      </a>
+      <a href="https://www.linkedin.com/in/akash-nagabhirava-164155327/" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/linkedin-animated.svg" alt="LinkedIn" style="width: 38px; height: 38px;">
+      </a>
+      <a href="https://devpost.com/akash30n" target="_blank" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/devpost-animated.svg" alt="Devpost" style="width: 38px; height: 38px;">
+      </a>
+      <a href="mailto:akash.nagabhirava@mail.utoronto.ca" style="display: flex; align-items: center; justify-content: center; opacity: 0.85; transition: transform 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.transform='scale(1.15) translateX(-3px)'; this.style.opacity='1'" onmouseout="this.style.transform='scale(1) translateX(0)'; this.style.opacity='0.85'">
+        <img src="/assets/icons/email-animated.svg" alt="Email" style="width: 38px; height: 38px;">
+      </a>
+    `;
+    icons.style.display = 'flex';
+  }, 3000);
+</script>
+
+<script>
+  (function() {
+    const iframe = document.getElementById('sketchfab-iframe');
+    const client = new Sketchfab(iframe);
+    client.init('sBv577Vdl9lrcvyFT3vbNvkGKml', {
+      success: function(api) {
+        api.start(function() {
+          api.setUserInteraction(true);
+        });
+      },
+      error: function() { console.error('Sketchfab init failed'); },
+      autostart:1, preload:1, transparent:1,
+      ui_animations:0, ui_infos:0, ui_stop:0, ui_inspector:0,
+      ui_watermark_link:0, ui_watermark:0, ui_hint:0, ui_ar:0,
+      ui_help:0, ui_settings:0, ui_vr:0, ui_fullscreen:0,
+      ui_annotations:0, ui_downloads:0, ui_share:0,
+    });
+  })();
+</script>
