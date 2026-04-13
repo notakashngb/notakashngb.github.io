@@ -1,6 +1,6 @@
 title: Akash
 baseurl: "" 
-url: "https://akashngb.github.io"
+url: "https://notakashngb.github.io"
 
 # This ensures Jekyll doesn't try to use the old theme logic
 theme: null
